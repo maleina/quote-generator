@@ -13,13 +13,37 @@ async function getQuote() {
     try {
         const response = await fetch(proxyUrl + apiUrl);
         const data = await response.json();
-        authorText.innerText = data.quoteAuthor;
+        // If author is blank, add 'Unknown'
+        if (data.quoteAuthor === '') {
+            authorText.innerText = 'Unknown';
+        } else {
+            authorText.innerText = data.quoteAuthor;
+        }
+        // Reduce font size for long quotes
+        if (data.quoteText.length > 120) {
+            quoteText.classList.add('long-quote');
+        } else {
+            quoteText.classList.remove('long-quote');
+        }
         quoteText.innerText = data.quoteText;
     } catch (error) {
         //getQuote();
         console.log(error);
     }
 }
+
+// Tweet Quote
+function tweetQuote() {
+    const quote = quoteText.innerText;
+    const author = authorText.innerText;
+    const twitterURL = `https://twitter.com/intent/tweet?text=${quote} - ${author}`;
+    window.open(twitterURL, '_blank');
+}
+
+// Event Listeners
+newQuoteBtn.addEventListener('click', getQuote);
+twitterBtn.addEventListener('click', tweetQuote);
+
 
 // On Load
 getQuote();
